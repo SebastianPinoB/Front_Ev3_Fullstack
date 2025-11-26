@@ -21,7 +21,7 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
         </Form.Item>
 
         {/* CONTRASEÑA CON VER/OCULTAR */}
-        <Form.Item label="Contraseña" name="password" rules={[{ required: true }]}>
+        <Form.Item label="Contraseña" name="contrasenia" rules={[{ required: true }]}>
           <Input
             placeholder="Ingresa tu contraseña"
             type={showPassword ? "text" : "password"}

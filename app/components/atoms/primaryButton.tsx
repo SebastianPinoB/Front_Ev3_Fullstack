@@ -7,7 +7,12 @@ interface PrimaryButtonProps {
 
 export default function PrimaryButton({ text, onClick }: PrimaryButtonProps) {
   return (
-    <Button type="primary" block onClick={onClick}>
+    <Button type="primary"
+        block
+        onClick={onClick}
+        htmlType="submit"
+      >
+        
       {text}
     </Button>
   );
