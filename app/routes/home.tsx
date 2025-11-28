@@ -1,13 +1,21 @@
-import type { Route } from "./+types/home";
-import LoginPage from "~/components/layouts/Login";
-
-export function meta({}: Route.MetaArgs) {
-  return [
-    { title: "New React Router App" },
-    { name: "description", content: "Welcome to React Router!" },
-  ];
-}
+import { useEffect } from "react";
+import { useNavigate } from "react-router";
+import { getUserFromToken } from "~/utils/getUserFromToken";
 
 export default function Home() {
-  return <LoginPage />;
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const user = getUserFromToken();
+
+    if (!user) {
+      navigate("/login");  
+      return;
+    }
+
+    if (user.rol === "ADMIN") navigate("/admin");
+    else navigate("/usuario");
+  }, []);
+
+  return null;
 }
