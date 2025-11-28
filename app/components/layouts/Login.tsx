@@ -39,8 +39,22 @@ export default function LoginPage() {
   };
 
   return (
-    <Flex align="center" justify="center" style={{ height: "100vh" }}>
-      <LoginForm onSubmit={handleLogin} />
-    </Flex>
+    <div className="flex h-screen">
+
+      {/* IZQUIERDA – FORMULARIO */}
+      <div className="flex items-center justify-center flex-1 bg-gray-50">
+        <LoginForm onSubmit={handleLogin} />
+      </div>
+
+      {/* DERECHA – IMAGEN */}
+      <div className="hidden md:block flex-1">
+        <img
+          src="/app/components/imgs/BibliotecaLogin2.jpg"  // Ruta
+          alt="Biblioteca"
+          className="w-full h-full object-cover"
+        />
+      </div>
+
+    </div>
   );
 }

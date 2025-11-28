@@ -1,21 +1,12 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router";
-import { getUserFromToken } from "~/utils/getUserFromToken";
+// app/routes/home.tsx
+import { Navigate } from "react-router-dom";
+import { getUserFromToken } from "../utils/auth";
 
 export default function Home() {
-  const navigate = useNavigate();
+  const user = getUserFromToken();
 
-  useEffect(() => {
-    const user = getUserFromToken();
+  if (!user) return <Navigate to="/login" replace />;
 
-    if (!user) {
-      navigate("/login");  
-      return;
-    }
-
-    if (user.rol === "ADMIN") navigate("/admin");
-    else navigate("/usuario");
-  }, []);
-
-  return null;
+  if (user.rol === "ADMIN") return <Navigate to="/admin" replace />;
+  return <Navigate to="/usuario" replace />;
 }
