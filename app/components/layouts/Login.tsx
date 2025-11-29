@@ -1,5 +1,4 @@
 import LoginForm from "../molecules/Login/formLogin";
-import { Flex } from "antd";
 import { loginUser } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { getUserFromToken } from "../../utils/getUserFromToken";
@@ -26,7 +25,7 @@ export default function LoginPage() {
         return;
       }
 
-      // redireccion según rol
+      // redireccion segun rol
       if (user.roles.includes("ROLE_ADMIN")) {
         navigate("/admin");
       } else {

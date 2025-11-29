@@ -1,8 +1,8 @@
 import { Card, Form, Input } from "antd";
 import { useState } from "react";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
-import TextInput from "../../atoms/textInput";
-import PrimaryButton from "../../atoms/primaryButton";
+import TextInput from "../../atoms/Login/textInput";
+import PrimaryButton from "../../atoms/Login/primaryButton";
 
 interface LoginFormProps {
   onSubmit: (values: { correo: string; password: string }) => void;
