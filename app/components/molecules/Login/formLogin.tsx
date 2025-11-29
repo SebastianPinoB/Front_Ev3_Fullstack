@@ -1,8 +1,10 @@
 import { Card, Form, Input } from "antd";
 import { useState } from "react";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
+import PrimaryButton from "../../atoms/Login/primaryButton"
 import TextInput from "../../atoms/Login/textInput";
-import PrimaryButton from "../../atoms/Login/primaryButton";
+import { Link } from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 interface LoginFormProps {
   onSubmit: (values: { correo: string; password: string }) => void;
@@ -10,7 +12,7 @@ interface LoginFormProps {
 
 export default function LoginForm({ onSubmit }: LoginFormProps) {
   const [showPassword, setShowPassword] = useState(false);
-
+  const navigate = useNavigate();
   return (
     <Card
       style={{
@@ -69,17 +71,27 @@ export default function LoginForm({ onSubmit }: LoginFormProps) {
         </Form.Item>
 
         {/* OLVIDASTE CONTRASEÑA */}
-        <div className="text-right -mt-2 mb-4">
-          <a
-            href="#"
-            className="text-primary text-sm underline hover:text-primary/80"
+        <div className="text-right -mt-2 mb-5 text-sm text-gray-600">
+          <Link
+            to="/recuperar"
+            className="text-primary underline hover:text-primary/80 font-medium"
           >
-            ¿Olvidaste tu contraseña?
-          </a>
+            ¿Olvidaste tu contraseña?{" "}
+          </Link>
         </div>
 
+
         {/* BOTÓN PRINCIPAL */}
-        <PrimaryButton text="Ingresar" />
+        <div className="text-center space-y-7">
+          <PrimaryButton text="Ingresar" />
+          <p>
+            ¿No tienes una cuenta?{" "}
+            <Link to="/registro" className="text-primary underline hover:text-primary/80">
+              Regístrate aquí
+            </Link>
+          </p>
+        </div>
+
       </Form>
     </Card>
   );

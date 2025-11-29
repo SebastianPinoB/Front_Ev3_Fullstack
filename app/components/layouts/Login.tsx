@@ -3,6 +3,7 @@ import { loginUser } from "../api/api";
 import { useNavigate } from "react-router-dom";
 import { getUserFromToken } from "../../utils/getUserFromToken";
 import { saveToken } from "../../utils/auth";
+import { Typography } from "antd";
 
 
 // Logica de conexión al backend
@@ -44,6 +45,7 @@ export default function LoginPage() {
       <div className="flex items-center justify-center flex-1 bg-gray-50">
         <LoginForm onSubmit={handleLogin} />
       </div>
+
 
       {/* DERECHA – IMAGEN */}
       <div className="hidden md:block flex-1">
