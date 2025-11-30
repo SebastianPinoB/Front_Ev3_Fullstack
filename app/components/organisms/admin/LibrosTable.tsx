@@ -1,62 +1,146 @@
-import TableActions from "~/components/molecules/Admin/TableActions";
+import React, { useState } from "react";
+import { Table, Modal, Form, Input, InputNumber, Button } from "antd";
 
-export default function LibrosTable({ libros, onDelete }: any) {
+import TableActions from "../../molecules/Admin/TableActions";
+
+import type { Libro } from "../../types/Libros";
+
+interface Props {
+  libros: Libro[];
+  loading?: boolean;
+  onDelete: (id: number) => Promise<void> | void;
+  onUpdate: (id: number, libro: Libro) => Promise<void> | void;
+  onCreate: (libro: Partial<Libro>) => Promise<Libro> | void;
+}
+
+export default function LibrosTable({ libros: propLibros, loading = false, onDelete, onUpdate, onCreate }: Props) {
+  const [editingLibro, setEditingLibro] = useState<Libro | null>(null);
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
+
+  const handleEdit = (libro: Libro) => {
+    setEditingLibro(libro);
+    setIsModalOpen(true);
+  };
+
+  const columns = [
+    { title: "Título", dataIndex: "titulo", key: "titulo" },
+    { title: "Autor", dataIndex: "autor", key: "autor" },
+    { title: "Año", dataIndex: "anio", key: "anio" },
+    { title: "Categoría", dataIndex: "categoria", key: "categoria" },
+    { title: "ISBN", dataIndex: "isbn", key: "isbn" },
+    {
+      title: "Precio",
+      key: "precio",
+      render: (_: any, row: Libro) =>
+        new Intl.NumberFormat("es-CL", {
+          style: "currency",
+          currency: "CLP",
+          minimumFractionDigits: 0,
+        }).format(row.precio),
+    },
+    { title: "Stock", dataIndex: "stock", key: "stock" },
+    {
+      title: "Acciones",
+      key: "acciones",
+      render: (_: any, row: Libro) => (
+        <TableActions
+          onDelete={() => onDelete(row.id)}
+          onEdit={() => handleEdit(row)}
+        />
+      ),
+    },
+  ];
+
   return (
-    <div className="overflow-hidden rounded-lg border border-gray-300 bg-white mt-4 shadow">
+    <>
+      <Table dataSource={propLibros} columns={columns} loading={loading} rowKey="id" />
 
-      <table className="min-w-full divide-y divide-gray-200">
+      {/* Modal de edición */}
+      <Modal
+        title="Editar libro"
+        open={isModalOpen}
+        onCancel={() => {
+          setIsModalOpen(false);
+          setEditingLibro(null);
+        }}
+        footer={null}
+      >
+        {editingLibro && (
+          <Form
+            layout="vertical"
+            initialValues={editingLibro}
+            onFinish={(values) => {
+              const updatedLibro = { ...editingLibro, ...values } as Libro;
+              onUpdate(updatedLibro.id, updatedLibro);
+              setIsModalOpen(false);
+              setEditingLibro(null);
+            }}
+          >
+            <Form.Item
+              label="Título"
+              name="titulo"
+              rules={[{ required: true, message: "Ingresa el título" }]}
+            >
+              <Input />
+            </Form.Item>
 
-        {/* ENCABEZADOS CON ESTILOS RESTAURADOS */}
-        <thead className="bg-gray-50">
-          <tr>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Título
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Autor
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Precio
-            </th>
-            <th className="px-6 py-3 text-left text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Stock
-            </th>
-            <th className="px-6 py-3 text-right text-xs font-semibold text-gray-700 uppercase tracking-wider">
-              Acciones
-            </th>
-          </tr>
-        </thead>
+            <Form.Item
+              label="Autor"
+              name="autor"
+              rules={[{ required: true, message: "Ingresa el autor" }]}
+            >
+              <Input />
+            </Form.Item>
 
-        <tbody className="divide-y divide-gray-200">
-          {libros.map((l: any) => (
-            <tr key={l.id} className="hover:bg-gray-100">
-              <td className="px-6 py-4 text-sm text-gray-900">{l.titulo}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{l.autor}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">${l.precio}</td>
-              <td className="px-6 py-4 text-sm text-gray-900">{l.stock}</td>
-              <td className="px-6 py-4 text-right">
-                <TableActions
-                  onEdit={() => alert("Editar (pendiente)")}
-                  onDelete={() => onDelete(l.id)}
-                />
-              </td>
-            </tr>
-          ))}
+            <Form.Item
+              label="Año"
+              name="anio"
+              rules={[{ required: true, message: "Ingresa el año" }]}
+            >
+              <InputNumber min={0} style={{ width: "100%" }} />
+            </Form.Item>
 
-          {/* FILA VACÍA */}
-          {libros.length === 0 && (
-            <tr>
-              <td
-                colSpan={5}
-                className="px-6 py-4 text-center text-gray-500 text-sm"
-              >
-                No hay libros
-              </td>
-            </tr>
-          )}
-        </tbody>
+            <Form.Item
+              label="Categoría"
+              name="categoria"
+              rules={[{ required: true, message: "Ingresa la categoría" }]}
+            >
+              <Input />
+            </Form.Item>
 
-      </table>
-    </div>
+            <Form.Item
+              label="ISBN"
+              name="isbn"
+              rules={[{ required: true, message: "Ingresa el ISBN" }]}
+            >
+              <Input />
+            </Form.Item>
+
+            <Form.Item
+              label="Precio"
+              name="precio"
+              rules={[{ required: true, message: "Ingresa el precio" }]}
+            >
+              <InputNumber min={0} style={{ width: "100%" }} />
+            </Form.Item>
+
+            <Form.Item
+              label="Stock"
+              name="stock"
+              rules={[{ required: true, message: "Ingresa el stock" }]}
+            >
+              <InputNumber min={0} style={{ width: "100%" }} />
+            </Form.Item>
+
+            <Form.Item>
+              <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+                Guardar cambios
+              </Button>
+            </Form.Item>
+          </Form>
+        )}
+      </Modal>
+    </>
   );
 }

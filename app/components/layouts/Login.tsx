@@ -1,40 +1,37 @@
 import LoginForm from "../molecules/Login/formLogin";
 import { loginUser } from "../api/api";
-import { useNavigate } from "react-router-dom";
-import { getUserFromToken } from "../../utils/getUserFromToken";
-import { saveToken } from "../../utils/auth";
-import { Typography } from "antd";
+import { useNavigate } from "react-router";
+import { getUserFromToken, saveToken } from "../../utils/auth";
+import { Typography, message } from "antd";
 
 
 // Logica de conexión al backend
 export default function LoginPage() {
   const navigate = useNavigate();
 
-  const handleLogin = async (values: { correo: string; password: string }) => {
+  const handleLogin = async (values: { correo: string; contrasenia: string }) => {
     try {
-      const data = await loginUser(values); // llama a la función de api
+      const data = await loginUser(values);
       saveToken(data.token);
 
-      // guarda el token correctamente
-      localStorage.setItem("jwt", data.token);
-
-      // decodifica el token desde localStorage
       const user = getUserFromToken();
 
       if (!user) {
-        alert("Error al decodificar token");
+        message.error("Ocurrió un problema al procesar tu sesión. Por favor, intenta iniciar sesión de nuevo.");
         return;
       }
 
-      // redireccion segun rol
+      // Redirigir basado en el rol
       if (user.roles.includes("ROLE_ADMIN")) {
-        navigate("/admin");
+        window.location.href = "/admin";
       } else {
-        navigate("/usuario");
+        window.location.href = "/usuario";
       }
 
     } catch (err: any) {
-      alert("Error: " + err.message);
+      // Mostrar mensaje más amigable para el usuario
+      const serverMsg = err?.message ? ` (${err.message})` : "";
+      message.error(`No se pudo iniciar sesión. Revisa tu correo y contraseña e inténtalo de nuevo.${serverMsg}`);
     }
   };
 

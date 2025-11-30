@@ -1,6 +1,6 @@
 
 // Logica de conexión con el backend
-export async function loginUser(data: { correo: string; password: string }) {
+export async function loginUser(data: { correo: string; contrasenia: string }) {
   const response = await fetch("http://localhost:8080/auth/login", {
     method: "POST",
     headers: {
@@ -9,9 +9,11 @@ export async function loginUser(data: { correo: string; password: string }) {
     body: JSON.stringify(data),
   });
 
+  const responseData = await response.json();
+
   if (!response.ok) {
-    throw new Error("Error en el login");
+    throw new Error(responseData.message || "Error en el login");
   }
 
-  return await response.json();
+  return responseData;
 }

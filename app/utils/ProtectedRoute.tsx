@@ -1,7 +1,8 @@
 // app/utils/ProtectedRoute.tsx
 import { Navigate } from "react-router";
-import { getUserFromToken } from "./getUserFromToken";
+import { getUserFromToken } from "./auth";
 import type { ReactNode } from "react";
+import { useEffect, useState } from "react";
 
 export default function ProtectedRoute({
    children,
@@ -10,7 +11,19 @@ export default function ProtectedRoute({
    children: ReactNode;
    rolesPermitidos?: string[];
 }) {
-   const user = getUserFromToken();
+   const [isClient, setIsClient] = useState(false);
+   const [user, setUser] = useState(getUserFromToken());
+
+   useEffect(() => {
+      setIsClient(true);
+      const decodedUser = getUserFromToken();
+      setUser(decodedUser);
+   }, []);
+
+   // En el servidor, no validar aún
+   if (!isClient) {
+      return <>{children}</>;
+   }
 
    if (!user) {
       return <Navigate to="/" replace />;

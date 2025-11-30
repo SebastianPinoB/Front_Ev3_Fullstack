@@ -3,11 +3,11 @@ import { useState } from "react";
 import { EyeOutlined, EyeInvisibleOutlined } from "@ant-design/icons";
 import PrimaryButton from "../../atoms/Login/primaryButton"
 import TextInput from "../../atoms/Login/textInput";
-import { Link } from "react-router-dom"
-import { useNavigate } from "react-router-dom";
+import { Link } from "react-router"
+import { useNavigate } from "react-router";
 
 interface LoginFormProps {
-  onSubmit: (values: { correo: string; password: string }) => void;
+  onSubmit: (values: { correo: string; contrasenia: string }) => void;
 }
 
 export default function LoginForm({ onSubmit }: LoginFormProps) {

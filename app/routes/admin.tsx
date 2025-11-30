@@ -9,10 +9,13 @@ import AdminLayout from "~/components/layouts/AdminLayout";
 import HeaderAdmin from "~/components/organisms/admin/HeaderAdmin";
 import Toolbar from "~/components/organisms/admin/Toolbar";
 import LibrosTable from "~/components/organisms/admin/LibrosTable";
+import { getLibros, createLibro, updateLibro, deleteLibro } from "~/components/api/LibrosApi";
 
 // Molecules
 import LogoutDialog from "~/components/molecules/Admin/LogoutDialog";
-import LibroForm from "~/components/molecules/Admin/LibroForm";
+// import LibroForm from "~/components/molecules/Admin/LibroForm"; // ahora usamos Ant Form aquí
+
+import { Form, Input as AntInput, InputNumber as AntInputNumber } from "antd";
 
 // Atoms
 import Button from "~/components/atoms/Admin/Button";
@@ -26,8 +29,11 @@ interface Libro {
   id: number;
   titulo: string;
   autor: string;
+  anio?: number;
   precio: number;
   stock: number;
+  categoria?: string;
+  isbn?: string;
 }
 
 
@@ -51,18 +57,27 @@ export default function AdminPage() {
   const [nuevoLibro, setNuevoLibro] = useState<Omit<Libro, "id">>({
     titulo: "",
     autor: "",
+    anio: undefined,
     precio: 0,
     stock: 0,
+    categoria: "",
+    isbn: "",
   });
+  const [form] = Form.useForm();
 
 
   // ================================
   //   OBTENER LIBROS DESDE API
   // ================================
   useEffect(() => {
-    fetch("http://localhost:8080/api/libros")
-      .then((res) => res.json())
-      .then((data: Libro[]) => setLibros(data));
+    (async () => {
+      try {
+        const data = await getLibros();
+        setLibros(data);
+      } catch (err) {
+        console.error("Error cargando libros:", err);
+      }
+    })();
   }, []);
 
 
@@ -70,36 +85,38 @@ export default function AdminPage() {
   //   ELIMINAR LIBRO
   // ================================
   const eliminarLibro = async (id: number) => {
-    await fetch(`http://localhost:8080/api/libros/${id}`, {
-      method: "DELETE",
-    });
-
-    setLibros(libros.filter((l) => l.id !== id));
+    try {
+      await deleteLibro(id);
+      setLibros((prev) => prev.filter((l) => l.id !== id));
+    } catch (err) {
+      console.error("Error eliminando libro:", err);
+    }
   };
 
 
   // ================================
-  //   GUARDAR LIBRO NUEVO
+  //   GUARDAR LIBRO NUEVO (vía Ant Form)
   // ================================
-  const guardarLibro = async () => {
-    const resp = await fetch("http://localhost:8080/api/libros", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(nuevoLibro),
-    });
+  const handleCreate = async (values: any) => {
+    try {
+      const creado = await createLibro(values);
+      setLibros((prev) => [...prev, creado]);
+      setMostrarModal(false);
+      form.resetFields();
 
-    const creado: Libro = await resp.json();
-
-    setLibros([...libros, creado]);
-    setMostrarModal(false);
-
-    // Reset formulario
-    setNuevoLibro({
-      titulo: "",
-      autor: "",
-      precio: 0,
-      stock: 0,
-    });
+      // Reset formulario local por compatibilidad
+      setNuevoLibro({
+        titulo: "",
+        autor: "",
+        anio: undefined,
+        precio: 0,
+        stock: 0,
+        categoria: "",
+        isbn: "",
+      });
+    } catch (err) {
+      console.error("Error creando libro:", err);
+    }
   };
 
 
@@ -126,7 +143,27 @@ export default function AdminPage() {
         <Toolbar onAdd={() => setMostrarModal(true)} />
 
         {/* TABLA */}
-        <LibrosTable libros={libros} onDelete={eliminarLibro} />
+        <LibrosTable
+          libros={libros}
+          onDelete={eliminarLibro}
+          onUpdate={async (id: number, libro: Libro) => {
+            try {
+              await updateLibro(id, libro);
+              setLibros((prev) => prev.map((l) => (l.id === id ? libro : l)));
+            } catch (err) {
+              console.error("Error actualizando libro desde tabla:", err);
+            }
+          }}
+          onCreate={async (partial) => {
+            try {
+              const creado = await createLibro(partial);
+              setLibros((prev) => [...prev, creado]);
+              return creado;
+            } catch (err) {
+              console.error("Error creando libro desde tabla:", err);
+            }
+          }}
+        />
 
 
         {/* ============================
@@ -140,18 +177,57 @@ export default function AdminPage() {
             <div className="relative bg-white w-full max-w-md p-6 rounded-lg shadow-xl z-10">
               <h2 className="text-2xl font-bold mb-4">Añadir Libro</h2>
 
-              <LibroForm 
-                nuevoLibro={nuevoLibro} 
-                setNuevoLibro={setNuevoLibro} 
-              />
+              <Form
+                form={form}
+                layout="vertical"
+                initialValues={nuevoLibro}
+                onFinish={handleCreate}
+              >
+                <Form.Item label="Título" name="titulo" rules={[{ required: true, message: 'Título requerido' }]}
+                >
+                  <AntInput />
+                </Form.Item>
 
-              <div className="flex justify-end gap-3 mt-4">
-                <Button variant="secondary" onClick={() => setMostrarModal(false)}>
-                  Cancelar
-                </Button>
+                <Form.Item label="Autor" name="autor" rules={[{ required: true, message: 'Autor requerido' }]}
+                >
+                  <AntInput />
+                </Form.Item>
 
-                <Button onClick={guardarLibro}>Guardar</Button>
-              </div>
+                <Form.Item label="Año" name="anio" rules={[{ required: true, message: 'Año requerido' }]}
+                >
+                  <AntInputNumber min={0} style={{ width: '100%' }} />
+                </Form.Item>
+
+                <Form.Item label="Precio" name="precio" rules={[{ required: true, message: 'Precio requerido' }]}
+                >
+                  <AntInputNumber min={0} style={{ width: '100%' }} />
+                </Form.Item>
+
+                <Form.Item label="Stock" name="stock" rules={[{ required: true, message: 'Stock requerido' }]}
+                >
+                  <AntInputNumber min={0} style={{ width: '100%' }} />
+                </Form.Item>
+
+                <Form.Item label="Categoría" name="categoria" rules={[{ required: true, message: 'Categoría requerida' }]}
+                >
+                  <AntInput />
+                </Form.Item>
+
+                <Form.Item label="ISBN" name="isbn" rules={[{ required: true, message: 'ISBN requerido' }]}
+                >
+                  <AntInput />
+                </Form.Item>
+
+                <div className="flex justify-end gap-3 mt-4">
+                  <Button variant="secondary" onClick={() => { setMostrarModal(false); form.resetFields(); }}>
+                    Cancelar
+                  </Button>
+
+                  <Button type="submit">
+                    Guardar
+                  </Button>
+                </div>
+              </Form>
             </div>
           </div>
         )}
