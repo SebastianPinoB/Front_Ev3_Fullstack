@@ -1,11 +1,27 @@
-import { Card, Form, Input, Button } from "antd";
+import { Card, Form, Input, Button, message } from "antd";
 import PrimaryButton from "../../atoms/Login/primaryButton"
 import TextInput from "../../atoms/Login/textInput";
 import { useNavigate } from "react-router-dom";
+import { registerUser } from "~/components/api/api";
 
 
 export default function RegisterForm() {
   const navigate = useNavigate();
+
+  const handleFinish = async (values: any) => {
+    try {
+      if (values.contrasenia !== values.confirmar) {
+        message.error("Las contraseñas no coinciden");
+        return;
+      }
+
+      await registerUser({ nombre: values.nombre, correo: values.correo, contrasenia: values.contrasenia });
+      message.success("La cuenta ha sido creada");
+      navigate("/");
+    } catch (err: any) {
+      message.error(err.message || "Error registrando la cuenta");
+    }
+  };
 
   return (
     <Card
@@ -45,7 +61,7 @@ export default function RegisterForm() {
       </div>
 
       {/* FORMULARIO */}
-      <Form layout="vertical" onFinish={(values) => console.log(values)}>
+      <Form layout="vertical" onFinish={handleFinish}>
         <Form.Item
           label="Nombre completo"
           name="nombre"

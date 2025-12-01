@@ -116,6 +116,7 @@ export default function AdminPage() {
       });
     } catch (err) {
       console.error("Error creando libro:", err);
+      throw err;
     }
   };
 
@@ -161,6 +162,7 @@ export default function AdminPage() {
               return creado;
             } catch (err) {
               console.error("Error creando libro desde tabla:", err);
+              throw err;
             }
           }}
         />

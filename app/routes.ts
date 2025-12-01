@@ -8,5 +8,6 @@ export default [
 
   route("/registro", "routes/registro.tsx"),
   route("/recuperar", "routes/recuperar.tsx"),
+  route("/carrito", "routes/carrito.tsx"),
   
 ];
