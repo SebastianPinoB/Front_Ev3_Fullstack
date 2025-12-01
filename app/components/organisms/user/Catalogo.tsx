@@ -204,13 +204,15 @@ export default function Catalogo() {
                                     <Button
                                        className="w-full bg-[#FFE600] hover:bg-[#f5d800] text-black font-medium border-none mt-2"
                                        onClick={() => {
-                                          addToCart(libro as Libro, 1);
-                                          message.success("Libro añadido al carrito");
-                                          window.dispatchEvent(new Event("cart-changed"));
+                                          if (typeof window !== 'undefined') {
+                                             addToCart(libro, 1);
+                                             message.success("Libro añadido al carrito");
+                                          }
                                        }}
                                     >
-                                       Comprar ahora
+                                       Añadir al Carrito
                                     </Button>
+
 
                                     {/* Nuevo botón detalle */}
                                     <Button

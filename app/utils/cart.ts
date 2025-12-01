@@ -1,13 +1,16 @@
-import type { Libro } from "~/components/types/Libros";
+import { type Libro } from "~/components/types/Libros";
 
 const CART_KEY = "cart";
 
+// La definición de CartItem se mantiene aquí y se exporta para que
+// todos los archivos usen esta única fuente de verdad.
 export interface CartItem {
   libro: Libro;
   cantidad: number;
 }
 
 function readCart(): CartItem[] {
+  // ... (lógica existente)
   try {
     const raw = localStorage.getItem(CART_KEY);
     if (!raw) return [];
@@ -18,7 +21,8 @@ function readCart(): CartItem[] {
   }
 }
 
-function writeCart(items: CartItem[]) {
+// Renombramos writeCart a saveCart y la exportamos para corregir el error 2305
+export function saveCart(items: CartItem[]) {
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
     try {
@@ -45,13 +49,13 @@ export function addToCart(libro: Libro, cantidad = 1) {
   } else {
     items.push({ libro, cantidad });
   }
-  writeCart(items);
+  saveCart(items); // Usamos la función exportada
   return items;
 }
 
 export function removeFromCart(libroId: number) {
   const items = readCart().filter((i) => i.libro.id !== libroId);
-  writeCart(items);
+  saveCart(items);
   return items;
 }
 
@@ -60,13 +64,13 @@ export function updateQuantity(libroId: number, cantidad: number) {
   const idx = items.findIndex((i) => i.libro.id === libroId);
   if (idx >= 0) {
     items[idx].cantidad = Math.max(1, cantidad);
-    writeCart(items);
+    saveCart(items);
   }
   return items;
 }
 
 export function clearCart() {
-  writeCart([]);
+  saveCart([]);
 }
 
 export function getCartTotal() {

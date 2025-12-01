@@ -5,6 +5,7 @@ export interface Libro {
   anio?: number;
   precio: number;
   stock: number;
+  imagen?: string;
   categoria?: string;
   isbn?: string;
 }
