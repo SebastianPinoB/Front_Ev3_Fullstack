@@ -64,7 +64,7 @@ export default function CarritoPage() {
             <div className="flex gap-3 mt-4">
               <button
                 className="px-4 py-2 rounded bg-gray-200 dark:bg-gray-700 font-bold"
-                onClick={() => navigate("/")}
+                onClick={() => navigate("/usuario")}
               >
                 Continuar Comprando
               </button>
