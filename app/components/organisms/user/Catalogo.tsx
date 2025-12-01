@@ -218,7 +218,7 @@ export default function Catalogo() {
                                     <Button
                                        type="default"
                                        className="w-full mt-2"
-                                       onClick={() => navigate(`/libro/${libro.id}`)}
+                                       onClick={() => navigate(`/catalogo/${libro.id}`)}
                                     >
                                        Ver detalle
                                     </Button>
