@@ -21,19 +21,29 @@ type Props = {
 
 export default function CartItemRow({ item, onQtyChange, onRemove }: Props) {
   return (
-    <div className="flex items-center gap-4 p-4 border-b last:border-b-0">
+    <div className="flex items-center gap-4 p-4 border-b border-gray-200 last:border-b-0 bg-white">
       <div style={{ width: 72 }}>
         <Image src={item.image} alt={item.title} width={56} height={80} preview={false} />
       </div>
       <div className="flex-1">
         <div className="flex justify-between items-start">
           <div>
-            <div className="font-semibold text-base">{item.title}</div>
-            {item.author && <div className="text-sm text-gray-500">{item.author}</div>}
+            <div className="font-semibold text-base text-gray-900">
+              {item.title}
+            </div>
+            {item.author && (
+              <div className="text-sm text-gray-600">
+                {item.author}
+              </div>
+            )}
           </div>
           <div className="text-right">
-            <div className="font-semibold">${(item.price)}</div>
-            <div className="text-sm text-gray-500">${(item.price * item.qty)}</div>
+            <div className="font-semibold text-gray-900">
+              ${item.price.toLocaleString("es-CL")}
+            </div>
+            <div className="text-sm text-gray-600">
+              ${(item.price * item.qty).toLocaleString("es-CL")}
+            </div>
           </div>
         </div>
         <div className="mt-3 flex items-center justify-between">
@@ -45,6 +55,7 @@ export default function CartItemRow({ item, onQtyChange, onRemove }: Props) {
             />
             <Button
               type="link"
+              danger
               icon={<DeleteOutlined />}
               onClick={() => onRemove(item.id)}
             >

@@ -176,7 +176,7 @@ export default function AdminPage() {
 
             <ModalBackdrop onClick={() => setMostrarModal(false)} />
 
-            <div className="relative bg-white w-full max-w-md p-6 rounded-lg shadow-xl z-10">
+            <div className="relative bg-white w-full max-w-md p-6 rounded-lg shadow-xl z-10 flex">
               <h2 className="text-2xl font-bold mb-4">Añadir Libro</h2>
 
               <Form
@@ -218,6 +218,14 @@ export default function AdminPage() {
                 <Form.Item label="ISBN" name="isbn" rules={[{ required: true, message: 'ISBN requerido' }]}
                 >
                   <AntInput />
+                </Form.Item>
+
+                <Form.Item
+                  label="Imagen (URL portada)"
+                  name="imagen"
+                  rules={[{ required: true, message: "Ingresa una URL de imagen" }]}
+                >
+                  <AntInput placeholder="https://covers.openlibrary.org/b/id/xxxx.jpg" />
                 </Form.Item>
 
                 <div className="flex justify-end gap-3 mt-4">

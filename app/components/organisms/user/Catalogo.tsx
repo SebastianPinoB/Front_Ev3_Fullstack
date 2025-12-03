@@ -21,50 +21,6 @@ import { useNavigate } from "react-router-dom";
 const { Title, Text } = Typography;
 const { Search } = Input;
 
-// ---------------- MOCK ----------------
-const librosMock = [
-   {
-      id: 1,
-      titulo: "Cien Años de Soledad",
-      autor: "Gabriel García Márquez",
-      precio: 19990,
-      imagen: "https://covers.openlibrary.org/b/id/10245614-L.jpg",
-      stock: 10,
-   },
-   {
-      id: 2,
-      titulo: "Don Quijote de la Mancha",
-      autor: "Miguel de Cervantes",
-      precio: 12500,
-      imagen: "https://covers.openlibrary.org/b/id/10501867-L.jpg",
-      stock: 10,
-   },
-   {
-      id: 3,
-      titulo: "La Sombra del Viento",
-      autor: "Carlos Ruiz Zafón",
-      precio: 18000,
-      imagen: "https://covers.openlibrary.org/b/id/8231856-L.jpg",
-      stock: 10,
-   },
-   {
-      id: 4,
-      titulo: "El Amor en los Tiempos del Cólera",
-      autor: "Gabriel García Márquez",
-      precio: 20000,
-      imagen: "https://covers.openlibrary.org/b/id/10333850-L.jpg",
-      stock: 10,
-   },
-   {
-      id: 5,
-      titulo: "Ficciones",
-      autor: "Jorge Luis Borges",
-      precio: 15500,
-      imagen: "https://covers.openlibrary.org/b/id/8319256-L.jpg",
-      stock: 10,
-   },
-];
-
 export default function Catalogo() {
    const [filtroTexto, setFiltroTexto] = useState("");
    const [categorias, setCategorias] = useState<string | null>(null);
@@ -90,18 +46,13 @@ export default function Catalogo() {
       })();
    }, []);
 
-   // COMBINAR API + MOCK
-   const libros = [
-      ...librosMock,
-      ...dbLibros.filter((d) => !librosMock.some((m) => m.id === d.id)),
-   ];
+   const libros = dbLibros;
 
    // FILTROS
    const filtrados = libros.filter((libro) => {
       const matchTexto =
          libro.titulo.toLowerCase().includes(filtroTexto.toLowerCase()) ||
          libro.autor.toLowerCase().includes(filtroTexto.toLowerCase());
-
 
       return matchTexto;
    });
@@ -116,7 +67,7 @@ export default function Catalogo() {
             Catálogo de Libros
          </Title>
 
-         {/* ---------------- BARRA DE BUSQUEDA ---------------- */}
+         {/* ---------------- barra busqueda ---------------- */}
          <div className="bg-white p-6 shadow-md rounded-xl mb-10 flex flex-wrap gap-4 items-center justify-between">
             <Space size="large" wrap>
                <Search
@@ -151,7 +102,7 @@ export default function Catalogo() {
             </Button>
          </div>
 
-         {/* ---------------- GRID ESTILO MERCADO LIBRE ---------------- */}
+         {/* --------------- grid ---------------- */}
          {loading ? (
             <div className="flex justify-center py-12">
                <Spin size="large" />
@@ -168,7 +119,7 @@ export default function Catalogo() {
                         >
                            <div className="flex h-full">
 
-                              {/* Imagen proporcional más pequeña */}
+                              {/* imagen proporcional mas pequeña */}
                               <div className="w-[110px] h-[160px] rounded-l-lg overflow-hidden bg-gray-100 flex-shrink-0">
                                  <img
                                     src={libro.imagen}
@@ -177,7 +128,7 @@ export default function Catalogo() {
                                  />
                               </div>
 
-                              {/* Información */}
+                              {/* informacion */}
                               <div className="p-3 flex flex-col justify-between h-full w-full">
 
                                  <div className="min-h-[90px] flex flex-col">
@@ -200,7 +151,7 @@ export default function Catalogo() {
                                        ${libro.precio}
                                     </Title>
 
-                                    {/* Botón comprar */}
+                                    {/* boton comprar */}
                                     <Button
                                        className="w-full bg-[#FFE600] hover:bg-[#f5d800] text-black font-medium border-none mt-2"
                                        onClick={() => {
@@ -213,8 +164,7 @@ export default function Catalogo() {
                                        Añadir al Carrito
                                     </Button>
 
-
-                                    {/* Nuevo botón detalle */}
+                                    {/* boton detalle */}
                                     <Button
                                        type="default"
                                        className="w-full mt-2"
@@ -231,7 +181,6 @@ export default function Catalogo() {
                   ))}
                </Row>
 
-               {/* ---------------- PAGINACIÓN ---------------- */}
                <div className="flex justify-center mt-10">
                   <Pagination
                      current={page}

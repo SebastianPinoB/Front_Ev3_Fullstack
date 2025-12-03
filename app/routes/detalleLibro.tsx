@@ -18,7 +18,7 @@ import type { Libro } from "~/components/types/Libros";
 
 const { Title, Text, Paragraph } = Typography;
 
-// Los mismos libros mock del catálogo
+// catalogo default
 const librosMock = [
   {
     id: 1,
@@ -79,7 +79,7 @@ export default function DetalleLibro() {
       try {
         const libroId = parseInt(id || "0");
         
-        // Primero buscar en mock
+        // busca en catalogo default
         const libroMock = librosMock.find((l) => l.id === libroId);
         if (libroMock) {
           setLibro(libroMock);
@@ -87,7 +87,7 @@ export default function DetalleLibro() {
           return;
         }
 
-        // Si no está en mock, buscar en API
+        // busca en api
         try {
           const dbLibros = await getLibros();
           const libroDb = dbLibros.find((l) => l.id === libroId);

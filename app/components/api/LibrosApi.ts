@@ -1,6 +1,6 @@
 import type {Libro} from "../types/Libros";
 
-const API_URL = "http://localhost:8080/api/libros"; // cambialo a tu ruta real
+const API_URL = "/api/libros";
 
 // Obtener todos los libros
 export async function getLibros(): Promise<Libro[]> {

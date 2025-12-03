@@ -118,6 +118,14 @@ export default function LibrosTable({ libros: propLibros, loading = false, onDel
             </Form.Item>
 
             <Form.Item
+              label="Imagen (URL portada)"
+              name="imagen"
+              rules={[{ required: true, message: "Ingresa una URL de imagen" }]}
+            >
+              <Input placeholder="https://covers.openlibrary.org/b/id/xxxx.jpg" />
+            </Form.Item>
+
+            <Form.Item
               label="Precio"
               name="precio"
               rules={[{ required: true, message: "Ingresa el precio" }]}

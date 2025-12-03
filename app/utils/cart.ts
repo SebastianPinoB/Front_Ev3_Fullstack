@@ -2,15 +2,15 @@ import { type Libro } from "~/components/types/Libros";
 
 const CART_KEY = "cart";
 
-// La definición de CartItem se mantiene aquí y se exporta para que
-// todos los archivos usen esta única fuente de verdad.
 export interface CartItem {
   libro: Libro;
   cantidad: number;
 }
 
 function readCart(): CartItem[] {
-  // ... (lógica existente)
+  // Verificar que estamos en el navegador
+  if (typeof window === 'undefined') return [];
+  
   try {
     const raw = localStorage.getItem(CART_KEY);
     if (!raw) return [];
@@ -21,8 +21,10 @@ function readCart(): CartItem[] {
   }
 }
 
-// Renombramos writeCart a saveCart y la exportamos para corregir el error 2305
 export function saveCart(items: CartItem[]) {
+  // Verificar que estamos en el navegador
+  if (typeof window === 'undefined') return;
+  
   try {
     localStorage.setItem(CART_KEY, JSON.stringify(items));
     try {
@@ -49,7 +51,7 @@ export function addToCart(libro: Libro, cantidad = 1) {
   } else {
     items.push({ libro, cantidad });
   }
-  saveCart(items); // Usamos la función exportada
+  saveCart(items);
   return items;
 }
 
